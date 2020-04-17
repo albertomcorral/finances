@@ -11,6 +11,8 @@ def macd(prices, small_span, large_span, macd_span):                            
     prices['macd_oscillator']=prices['macd_signal']-prices['macd_ema']
     prices['macd_position']=np.where(prices['macd_signal']>prices['macd_ema'],1,0)      # Calculates when macd_signal is over macd_ema
     prices['macd_signal']=prices['macd_position'].diff()                                # Indicates with +1/-1 when to buy/sell
+    prices['position']=np.where(prices['macd_signal']>prices['macd_ema'],1,0)
+    prices['signal']=prices['position'].diff()
     return prices                                                                       # the function returns the expanded dataframe
 
 def plotMacd(prices):
@@ -29,15 +31,7 @@ def plotMacd(prices):
 
 def portfolio(prices, starting_capital, positions, commission, stoploss_percentage):
     
-    #prices = stoploss (prices, stoploss_percentage)
-    #portfolio=pd.DataFrame(index=prices.index)
-    #portfolio['holdings']=positions * prices['signal'].cumsum() * prices.iloc[:,0]
-    #portfolio['cash']= starting_capital - (prices['signal'] * prices.iloc[:,0] * positions * (1 + prices['signal'] * commission)).cumsum()
-    #portfolio['total']= portfolio['holdings'] + portfolio['cash']
-    #portfolio['return']=portfolio['total'].pct_change()
-    #return portfolio
-#
-    #portfolio = pd.DataFrame(index=prices.index)
+    portfolio = pd.DataFrame(index=prices.index)
     df = pd.DataFrame(index=prices.index)
     prices = stoploss (prices, stoploss_percentage)                             # llamo a la funcion stop loss para modificar la señal
     portfolio['signal'] = prices['signal'].clip(-1,1).fillna(0)                 # traigo la señal y lleno los NA con 0
